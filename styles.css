@@ -1,0 +1,75 @@
+.container {
+    width: 1440px;
+    height: 1024px;
+    background: #ffffff;
+    .sidebar {
+      width: 281px;
+      height: 1024px;
+      .Naiming {
+        color: #212121;
+        font-family: Inter;
+        font-size: 32px;
+        font-weight: normal;
+  
+      }
+      .menu {
+        display: flex;
+        flex-direction: column;
+        width: 280px;
+        height: 237px;
+      }
+    }
+    .button_menu {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 25px 40px;
+        width: 280px;
+        height: 79px;
+        background: #d8e4e8;
+    
+        .text {
+          color: #212121;
+          font-family: Inter;
+          font-size: 24px;
+          font-weight: normal;
+    
+        }
+      }
+    }
+    .name {
+      color: #212121;
+      font-family: Inter;
+      font-size: 18px;
+      font-weight: normal;
+     
+    }
+    .photo {
+      width: 41px;
+      height: 41px;
+      background: #d9d9d9;
+      border-radius: 50%;
+    }
+    .date {
+      color: #212121;
+      font-family: Inter;
+      font-size: 18px;
+      font-weight: normal;
+    
+    }
+    .button {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 19px 34px;
+      width: 204px;
+      height: 60px;
+      background: #d8e4e8;
+      .name {
+        color: #212121;
+        font-family: Inter;
+        font-size: 18px;
+        font-weight: normal;
+      
+      }
+    }
