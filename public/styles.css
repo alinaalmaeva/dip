@@ -29,15 +29,14 @@
     }
     .main{
       width: 80%;
-      margin-top: 50px;
-      margin-left: 30px;
+      margin: 50px 30px;
+
     }
     .button_menu {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         padding: 25px 40px;
-        width: 280px;
         height: 79px;
         background: #d8e4e8;
         color: #212121;
@@ -50,16 +49,18 @@
     }
 
     .photo {
-      width: 41px;
-      height: 41px;
+      width: 50px;
+      height: 50px;
       background: #d9d9d9;
       border-radius: 50%;
+
     }
     .date {
       color: #212121;
       font-family: Inter;
       font-size: 20px;
       font-weight: normal;
+      padding-top: 8px;
     
     }
     button {
@@ -80,6 +81,9 @@
       font-size: 24px;
       font-weight: normal;
       display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
     }
 
     .name{
@@ -88,6 +92,7 @@
         font-size: 20px;
         font-weight: normal;
         margin-right: 15px;
+        padding-top: 8px;
     }
 
     .table {
@@ -111,10 +116,12 @@
     }
     
     .right_header{
-      display: flex;
-      padding: 15px;
+      display:flex;
+      padding: 7px;
+
     }
 
     .name_photo{
       display: flex;
+      padding-left: 35px;
    }
