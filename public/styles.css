@@ -48,13 +48,7 @@
        
       }
     }
-    .name {
-      color: #212121;
-      font-family: Inter;
-      font-size: 18px;
-      font-weight: normal;
-     
-    }
+
     .photo {
       width: 41px;
       height: 41px;
@@ -64,7 +58,7 @@
     .date {
       color: #212121;
       font-family: Inter;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: normal;
     
     }
@@ -91,15 +85,18 @@
     .name{
       color: #212121;
         font-family: Inter;
-        font-size: 24px;
+        font-size: 20px;
         font-weight: normal;
+        margin-right: 15px;
     }
 
     .table {
+      margin-top: 40px;
       width: 100%;
       margin-bottom: 20px;
       border: 1px solid #dddddd;
       border-collapse: collapse; 
+      font-size: 20px;
 
     }
     .table th {
@@ -112,3 +109,12 @@
       border: 1px solid #dddddd;
       padding: 5px;
     }
+    
+    .right_header{
+      display: flex;
+      padding: 15px;
+    }
+
+    .name_photo{
+      display: flex;
+   }
