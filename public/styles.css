@@ -1,23 +1,36 @@
 .container {
-    width: 1440px;
-    height: 1024px;
-    background: #ffffff;
+    /*width: 1440px; */
+    height: 100%;
+    background: #fbfbfb;
+    display: flex;
     .sidebar {
-      width: 281px;
-      height: 1024px;
+      width: 20%;
+      background-color: #d8e4e8;
+
+
       .Naiming {
         color: #212121;
         font-family: Inter;
         font-size: 32px;
         font-weight: normal;
-  
-      }
+        margin-left: 40px;
+        margin-top: 50px;
+
+        }
+
       .menu {
         display: flex;
         flex-direction: column;
         width: 280px;
         height: 237px;
+        margin-top: 50px;
+
       }
+    }
+    .main{
+      width: 80%;
+      margin-top: 50px;
+      margin-left: 30px;
     }
     .button_menu {
         display: flex;
@@ -27,14 +40,12 @@
         width: 280px;
         height: 79px;
         background: #d8e4e8;
-    
-        .text {
-          color: #212121;
+        color: #212121;
           font-family: Inter;
           font-size: 24px;
           font-weight: normal;
     
-        }
+       
       }
     }
     .name {
@@ -53,23 +64,51 @@
     .date {
       color: #212121;
       font-family: Inter;
-      font-size: 18px;
+      font-size: 24px;
       font-weight: normal;
     
     }
-    .button {
+    button {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       padding: 19px 34px;
-      width: 204px;
       height: 60px;
-      background: #d8e4e8;
-      .name {
-        color: #212121;
-        font-family: Inter;
-        font-size: 18px;
-        font-weight: normal;
+      font-size: 20px;
+      background-color: #d8e4e8;
+      border: none;
       
-      }
+    }
+
+    .header{
+      color: #212121;
+      font-family: Inter;
+      font-size: 24px;
+      font-weight: normal;
+      display: flex;
+    }
+
+    .name{
+      color: #212121;
+        font-family: Inter;
+        font-size: 24px;
+        font-weight: normal;
+    }
+
+    .table {
+      width: 100%;
+      margin-bottom: 20px;
+      border: 1px solid #dddddd;
+      border-collapse: collapse; 
+
+    }
+    .table th {
+      font-weight: bold;
+      padding: 5px;
+      background: #efefef;
+      border: 1px solid #dddddd;
+    }
+    .table td {
+      border: 1px solid #dddddd;
+      padding: 5px;
     }
