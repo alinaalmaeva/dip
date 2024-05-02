@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <title>Авторизация</title>
+</head>
+<body class="sign">
+    <div class="wapper">
+        <h1>Вход в систему</h1>
+        
+        <ul>
+            <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
+            <li><%= error.message %></li>
+            <% }) %> <% } %>
+          </ul>
+      
+          <ul>
+            <% if(messages.success_msg) { %>
+            <li><%= messages.success_msg %></li>
+            <% } %>
+          </ul>
+      
+          <ul>
+            <% if (messages.error) { %>
+            <li><%= messages.error %></li>
+            <% } %>
+          </ul>
+
+    <form action="/" method="POST" class="form grid">
+        
+        <div class="inputDiv">
+            <label htmlFor="email">Логин</label>
+            <input type="text" id="email" name="email" placeholder="Введите email" required/>
+        </div>
+        <div class="inputDiv">
+            <label htmlFor="password">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required/>
+        </div>
+        
+<button type="submit" class="btn flex">Войти</button>
+<a href="/users/register">Нет аккаунта? Регистрация</a>
+    </form>
+</div>
+</body>
+</html>

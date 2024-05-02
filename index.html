@@ -1,63 +1,24 @@
-<html>
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/styles.css">
-    <title>Самый лучший диплом</title>
+    <title>Авторизация</title>
 </head>
-
-<body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="Naiming">Servec desk</div>
-            <div class="menu">
-                <div class="button_menu">Заявки</div>
-                <div class="button_menu">Документы</div>
-                <div class="button_menu">Личный кабинет</div>
-            </div>
+<body class="sign">
+    <div class="wapper">
+        <h1>Вход в систему</h1>
+    <form action="" class="form grid">
+        <div class="inputDiv">
+            <label htmlFor="username">Логин</label>
+            <input type="text" id="username" placeholder="Введите логин"/>
         </div>
-
-        <div class="main">
-        <div class="header">
-            <button>+ Новая заявка</button>
-            <div class="right_header">
-            <div class="date">23.05.2024</div>
-            <div class="name_photo">
-                <div class="name">Иванов И.</div>
-                <div class="photo"></div>
-            </div>
+        <div class="inputDiv">
+            <label htmlFor="password">Пароль</label>
+            <input type="password" id="password" placeholder="Введите пароль"/>
         </div>
-        </div>
-        
-        <table class="table">
-            <thead>
-              <tr>
-                <th>№ заявки</th>
-                <th>Оборудование</th>
-                <th>Исполнитель</th>
-                <th>Заявитель</th>
-                <th>Дата создания</th>
-                <th>Дата завершения</th>
-                <th>Статус</th>
-              </tr>
-            </thead>
-            <tbody>
-                <tr>
-                  <td>Ячейка 1,1</td>
-                  <td>Ячейка 1,1</td>
-                  <td>Ячейка 1,1</td>
-                  <td>Ячейка 1,1</td>
-                  <td>Ячейка 1,1</td>
-                  <td>Ячейка 1,1</td>
-                  <td>Ячейка 1,1</td>
-                </tr>
-                
-              </tbody>
-          </table>
-    </div>
-        
-    </div>
+<button type="submit" class="btn flex" onclick="login()">Войти</button>
+    </form>
+</div>
 </body>
-
 </html>

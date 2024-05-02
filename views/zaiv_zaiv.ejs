@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <title>Самый лучший диплом</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="Naiming">Servec desk</div>
+            <div class="menu">
+                <div class="button_menu">Заявки</div>
+                <div class="button_menu">Документы</div>
+                <div class="button_menu">Личный кабинет</div>
+            </div>
+        </div>
+
+        <div class="main">
+        <div class="header">
+            <button onclick="window.location.href='/new_zaiv.html';">+ Новая заявка</button>
+            <div class="right_header">
+            <div class="date">23.05.2024</div>
+            <div class="name_photo">
+                <div class="name"> <%= user %> </div>
+                <div class="photo"></div>
+            </div>
+        </div>
+        </div>
+        
+        <table class="table">
+            <thead>
+              <tr>
+                <th>№ заявки</th>
+                <th>Оборудование</th>
+                <th>Исполнитель</th>
+                <th>Заявитель</th>
+                <th>Дата создания</th>
+                <th>Дата завершения</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% data.forEach(function(user) { %>
+                <tr>
+                  <td><%= user.id_zaivka %></td>
+                  <td><%= user.invert_number %></td>
+                  <td><%= user.familiy %></td>
+                  <td><%= user.family %></td>
+                  <td><%= user.date_start %></td>
+                  <td><%= user.date_finish %></td>
+                  <td><%= user.name_status %></td>
+                </tr>
+                <% }) %>
+              </tbody>
+          </table>
+    </div>
+        
+    </div>
+</body>
+
+</html>

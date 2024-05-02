@@ -1,0 +1,41 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <title>Авторизация</title>
+</head>
+<body class="sign">
+    <div class="wapper">
+        <h1>Регистрация</h1>
+
+        <ul>
+            <% if (typeof errors != 'undefined') { %> 
+                <% errors.forEach(error => { %>
+            <li><%= error.message %></li>
+            <% }) %> <% } %>
+          </ul>
+
+    <form action="/users/register" method="POST" class="form grid">
+        <div class="inputDiv">
+            <label htmlFor="name">Имя</label>
+            <input type="text" id="name" name="name" placeholder="Введите имя" required/>
+        </div>
+        <div class="inputDiv">
+            <label htmlFor="email">Почта</label>
+            <input type="text" id="email" name="email" placeholder="Введите email" required/>
+        </div>
+        <div class="inputDiv">
+            <label htmlFor="password">Пароль</label>
+            <input type="password" id="password" name="password" placeholder="Введите пароль" required/>
+        </div>
+        <div class="inputDiv">
+            <label htmlFor="password2">Повторите пароль</label>
+            <input type="password" id="password2" name="password2"  placeholder="Введите пароль" required/>
+        </div>
+<button type="submit" class="btn flex" >Войти</button>
+<a href="/">Уже зарегистрирован? Войти здесь</a>
+    </form>
+</div>
+</body>
+</html>
