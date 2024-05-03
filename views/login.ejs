@@ -7,8 +7,10 @@
 </head>
 <body class="sign">
     <div class="wapper">
-        <h1>Вход в систему</h1>
+        <p class="date" name=data id=demo></p>
         
+        <h1>Вход в систему</h1>
+
         <ul>
             <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
             <li><%= error.message %></li>

@@ -22,7 +22,12 @@
         <div class="header">
             <button onclick="window.location.href='/new_zaiv.html';">+ Новая заявка</button>
             <div class="right_header">
-            <div class="date">23.05.2024</div>
+                <div class="date" id=date></div>
+                <script>
+                    var d = new Date();
+                    data =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
+                    document.getElementById("date").textContent = data;
+                </script>
             <div class="name_photo">
                 <div class="name"> <%= user %> </div>
                 <div class="photo"></div>

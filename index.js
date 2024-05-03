@@ -105,7 +105,7 @@ app.get("/users/zaiv_zaiv", checkNotAuthenticated, async(req, res)=>{
   try {
     // Выполните запрос к базе данных
 
-    const result = await client.query('SELECT id_zaivka, oborydovanie.invert_number, zaivitel.family, ispolnitel.familiy, date_start, date_finish, status.name_status FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN zaivitel ON zaivka.fk_zaivitel = zaivitel.id_zaivitel JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel');
+    const result = await client.query('SELECT id_zaivka, oborydovanie.invert_number,zaivitel.family, ispolnitel.familiy, date_start, date_finish, status.name_status FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN zaivitel ON zaivka.fk_zaivitel = zaivitel.id_zaivitel JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel');
     result.rows.forEach(row => {
       row.date_start = row.date_start ? row.date_start.toLocaleDateString() : null,
       row.date_finish= row.date_finish ? row.date_finish.toLocaleDateString() : null
@@ -198,14 +198,14 @@ function checkNotAuthenticated(req, res, next) {
 }
 
 
-const client = new Client({
-    host: "localhost",
-    user: "postgres",
-    port: 5432, 
-    password: "1",
-    database: "desk"
-})
+//const client = new Client({
+//    host: "localhost",
+  //  user: "postgres",
+//    port: 5432, 
+ //   password: "1",
+ //   database: "desk"
+//})
 
-client.connect();
+//client.connect();
 
-module.exports = { client: client };
+//module.exports = { client: client };
