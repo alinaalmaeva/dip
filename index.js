@@ -120,9 +120,10 @@ app.get("/users/zaiv_zaiv", checkNotAuthenticated, async(req, res)=>{
 
 
 app.post("/users/register", async (req, res) => {
-    let { name, email, password, password2 } = req.body;
+    let {firstname, name, email, password, password2 } = req.body;
   
     console.log({
+      firstname,
       name,
       email,
       password,
@@ -130,7 +131,7 @@ app.post("/users/register", async (req, res) => {
     });
 
     let errors = [];
-    if (!name || !email || !password || !password2) {
+    if (!firstname || !name || !email || !password || !password2) {
         errors.push({ message: "Заполните все поля" });
       }
     
@@ -160,8 +161,8 @@ app.post("/users/register", async (req, res) => {
            errors.push({message: "Email уже зарегистрирован"});
            res.render("register", {errors});
         }else{
-            client.query(`INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, password`,
-                [name, email, hashedPassword],
+            client.query(`INSERT INTO users (firstname, name, email, password) VALUES ($1, $2, $3) RETURNING id, password`,
+                [firstname, name, email, hashedPassword],
                 (err, results) => {
                   if (err) {
                     throw err;
