@@ -240,14 +240,14 @@ function checkNotAuthenticated(req, res, next) {
 }
 
 
-const client = new Client({
-    host: "localhost",
-    user: "postgres",
-    port: 5432, 
-    password: "1",
-    database: "desk"
-})
+//const client = new Client({
+//    host: "localhost",
+  //  user: "postgres",
+//    port: 5432, 
+ //   password: "1",
+ //   database: "desk"
+//})
 
-client.connect();
+//client.connect();
 
-module.exports = { client: client };
+//module.exports = { client: client };

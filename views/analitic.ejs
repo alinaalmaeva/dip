@@ -1,0 +1,74 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <title>Самый лучший диплом</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="Naiming">Servec desk</div>
+            <div class="menu">
+                <<div class="button_menu"><a href="/users/zaiv_zaiv">Заявки</a></div>
+                <div class="button_menu">Документы</div>
+                <div class="button_menu">Склад</div>
+                <div class="button_menu">Аналитика</div>
+                <div class="button_menu">Сотрудники</div>
+                <div class="button_menu">Личный кабинет</div>
+            </div>
+        </div>
+
+        <div class="main">
+        <div class="header">
+            <button onclick="window.location.href='/new_zaiv.html';">+ Новая заявка</button>
+            <div class="right_header">
+                <div class="date" id=date></div>
+                <script>
+                    var d = new Date();
+                    data =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
+                    document.getElementById("date").textContent = data;
+                </script>
+            <div class="name_photo">
+                <div class="name"> <%= user %> </div>
+                <div class="photo"></div>
+            </div>
+        </div>
+        </div>
+        <div>
+            <h1>Аналитика</h1>
+            <div>
+                <canvas id="myChart"></canvas>
+            </div>
+        </div>
+       
+        <script>
+            const ctx = document.getElementById('myChart');
+          
+            new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                  label: '# of Votes',
+                  data: [12, 19, 3, 5, 2, 3],
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  }
+                }
+              }
+            });
+          </script>
+    </div>
+        
+    </div>
+</body>
+
+</html>
