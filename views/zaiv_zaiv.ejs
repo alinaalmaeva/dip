@@ -20,9 +20,14 @@
 
         <div class="main">
         <div class="header">
-            <button onclick="window.location.href='/new_zaiv.html';">+ Новая заявка</button>
+            <button onclick="window.location.href='new_zaiv';">+ Новая заявка</button>
             <div class="right_header">
-            <div class="date">23.05.2024</div>
+                <div class="date" id=date></div>
+                <script>
+                    var d = new Date();
+                    data =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
+                    document.getElementById("date").textContent = data;
+                </script>
             <div class="name_photo">
                 <div class="name"> <%= user %> </div>
                 <div class="photo"></div>
@@ -35,8 +40,8 @@
               <tr>
                 <th>№ заявки</th>
                 <th>Оборудование</th>
-                <th>Исполнитель</th>
                 <th>Заявитель</th>
+                <th>Исполнитель</th>
                 <th>Дата создания</th>
                 <th>Дата завершения</th>
                 <th>Статус</th>
@@ -47,8 +52,8 @@
                 <tr>
                   <td><%= user.id_zaivka %></td>
                   <td><%= user.invert_number %></td>
+                  <td><%= user.firstname %></td>
                   <td><%= user.familiy %></td>
-                  <td><%= user.family %></td>
                   <td><%= user.date_start %></td>
                   <td><%= user.date_finish %></td>
                   <td><%= user.name_status %></td>

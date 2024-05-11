@@ -101,11 +101,12 @@ app.get("/",checkAuthenticated,(req, res)=>{
     res.render("login");
 });
 
+
 app.get("/users/zaiv_zaiv", checkNotAuthenticated, async(req, res)=>{
   try {
     // Выполните запрос к базе данных
 
-    const result = await client.query('SELECT id_zaivka, oborydovanie.invert_number, zaivitel.family, ispolnitel.familiy, date_start, date_finish, status.name_status FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN zaivitel ON zaivka.fk_zaivitel = zaivitel.id_zaivitel JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel');
+    const result = await client.query('SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel');
     result.rows.forEach(row => {
       row.date_start = row.date_start ? row.date_start.toLocaleDateString() : null,
       row.date_finish= row.date_finish ? row.date_finish.toLocaleDateString() : null
@@ -114,15 +115,17 @@ app.get("/users/zaiv_zaiv", checkNotAuthenticated, async(req, res)=>{
   } catch (err) {
     console.error(err);
     res.status(500).send('Ошибка сервера');
+    return;
   }
 });
 
 
 
 app.post("/users/register", async (req, res) => {
-    let { name, email, password, password2 } = req.body;
+    let {firstname, name, email, password, password2 } = req.body;
   
     console.log({
+      firstname,
       name,
       email,
       password,
@@ -130,7 +133,7 @@ app.post("/users/register", async (req, res) => {
     });
 
     let errors = [];
-    if (!name || !email || !password || !password2) {
+    if (!firstname|| !name || !email || !password || !password2) {
         errors.push({ message: "Заполните все поля" });
       }
     
@@ -143,7 +146,7 @@ app.post("/users/register", async (req, res) => {
       }
     
       if (errors.length > 0) {
-        res.render("register", { errors, name, email, password, password2 });
+        res.render("register", { errors, firstname, name, email, password, password2 });
       }
       else{
        let hashedPassword = await bcrypt.hash(password, 10);
@@ -160,8 +163,8 @@ app.post("/users/register", async (req, res) => {
            errors.push({message: "Email уже зарегистрирован"});
            res.render("register", {errors});
         }else{
-            client.query(`INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, password`,
-                [name, email, hashedPassword],
+            client.query(`INSERT INTO users (firstname, name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, password`,
+                [firstname, name, email, hashedPassword],
                 (err, results) => {
                   if (err) {
                     throw err;
@@ -174,6 +177,45 @@ app.post("/users/register", async (req, res) => {
         }
       });
 }
+});
+
+app.post("/users/new_zaiv", async(req, res)=>{
+  const text = req.body.text;
+  const status = 3;
+  var d = new Date();
+  const date_start =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
+  
+  const userResult = await client.query('SELECT id FROM users WHERE firstname = $1', [req.user.firstname]);
+if (userResult.rows.length === 0) {
+  return res.status(400).send('User not found');
+}
+const fk_zaivitel = userResult.rows[0].id;
+
+const oborydResult = await client.query('SELECT id_oboryd FROM oborydovanie WHERE invert_number = $1', [req.body.invert_number]);
+if (oborydResult.rows.length === 0) {
+  return res.status(400).send('Oborydovanie not found');
+}
+const fk_invert_number = oborydResult.rows[0].id_oboryd;
+console.log(fk_invert_number);
+
+try {
+  await client.query('INSERT INTO zaivka (fk_invert_number, fk_zaivitel, date_start, status, text) VALUES ($1, $2, $3, $4, $5)', [fk_invert_number, fk_zaivitel, date_start, status, text]);
+  const results = await client.query(`SELECT * FROM oborydovanie`);
+  res.render("new_zaiv", { user: req.user.name, data: results.rows });
+  console.log("Заявка успешно создана");
+} catch (err) {
+  console.error(err);
+  res.status(500).send("Ошибка принии заявки");
+}
+
+});
+
+
+
+app.get("/users/new_zaiv", async(req, res)=>{
+  const results = await client.query(`SELECT * FROM oborydovanie`);
+res.render("new_zaiv", {user: req.user.name, data: results.rows});
+return;
 });
 
 app.post("/", passport.authenticate("local",{

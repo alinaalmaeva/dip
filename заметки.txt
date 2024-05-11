@@ -1,0 +1,35 @@
+Если столбец `fk_zaivitel` в таблице `zaivka` имеет тип данных `integer`, и значение для этого столбца должно быть взято из другой таблицы, то Вам нужно сначала получить это значение из другой таблицы, прежде чем выполнять операцию `INSERT`.
+
+Предположим, что у Вас есть другая таблица `users`, и Вы хотите получить `id` пользователя по его `firstname`. Вот как Вы можете это сделать:
+
+```javascript
+app.get("/users/new_zaiv", async (req, res) => {
+  const { fk_invert_number, text } = req.body;
+  var d = new Date();
+  const date_start = `${("0" + d.getDate()).slice(-2)}.${("0" + (Number(d.getMonth()) + 1)).slice(-2)}.${d.getFullYear()}`;
+  const status = 3; // Статус, который Вы хотите установить
+
+  // Получаем id пользователя по его firstname
+  const userResult = await client.query(
+    'SELECT id FROM users WHERE firstname = $1',
+    [req.user.firstname]
+  );
+
+  if (userResult.rows.length === 0) {
+    // Обработка случая, когда пользователь не найден
+    return res.status(400).send('User not found');
+  }
+
+  const fk_zaivitel = userResult.rows[0].id;
+
+  // Теперь выполняем INSERT с правильным значением fk_zaivitel
+  await client.query(
+    'INSERT INTO zaivka (fk_invert_number, fk_zaivitel, date_start, status, text) VALUES ($1, $2, $3, $4, $5)',
+    [fk_invert_number, fk_zaivitel, date_start, status, text]
+  );
+
+  res.redirect('/some-success-page'); // Перенаправляем на страницу успешного создания заявки
+});
+```
+
+В этом примере мы сначала выполняем запрос к таблице `users` для получения `id` пользователя по его `firstname`. Затем мы используем этот `id` в качестве значения для `fk_zaivitel` при выполнении `INSERT` в таблицу `zaivka`.
