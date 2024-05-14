@@ -1,0 +1,90 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <title>Самый лучший диплом</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="Naiming">Servec desk</div>
+            <div class="menu">
+                <div class="button_menu"><a href="/users/zaiv_zaiv">Заявки </a></div>
+                <div class="button_menu">Документы</div>
+                <div class="button_menu"><a href="/users/analitic">Аналитика </a></div>
+                <div class="button_menu">Личный кабинет</div>
+            </div>
+        </div>
+
+        <div class="main">
+        <div class="header">
+            <button onclick="window.location.href='new_zaiv';">+ Новая заявка</button>
+            <div class="right_header">
+                <div class="date" id=date></div>
+                <script>
+                    var d = new Date();
+                    data =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
+                    document.getElementById("date").textContent = data;
+                </script>
+            <div class="name_photo">
+                <div class="name"> <%= user %> </div>
+                <div class="photo"></div>
+            </div>
+        </div>
+        </div>
+
+        <div class="zaivka-page">
+            <h1>Заявка № <%= zaivka.id_zaivka %></h1>
+           <div class="zaivka-data">
+              <label id="number">Инвентарный номер:  <%= zaivka.invert_number %></label>
+              <label id="zaivitel">Заявитель:  <%= zaivka.firstname %></label>
+              <label id="ispolnitel">Исполнитель:  <%= zaivka.familiy %></label>
+              <label id="status">Статус:  <%= zaivka.name_status%></label>
+              <label id="date_start">Дата начала:  <%= zaivka.date_start %></label>
+              <label id="date_finish">Дата завершения: <%= zaivka.date_finish %></label>
+              <label id="text">Комментарий:  <%= zaivka.text %></label>
+            </div> 
+            <div class="buttons">
+            <div class="dowland-act">
+                <button id="btn">Акт выполненных работ</button>
+            </div>
+            <div class="dowland-prin">
+                <button id="btn">Принять в работу</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const btn = document.querySelector("#btn").addEventListener('click', getData);
+
+        function getData() {
+          fetch('http://localhost:3000/users/zaivka-page/<%=zaivka.id_zaivka %>', {
+            method: 'POST'
+          })
+            .then(res => res.blob())
+            .then(data => {
+              let url = URL.createObjectURL(data);
+              console.log(url);
+
+              let anchor = document.createElement('a')
+              anchor.href = url;
+              anchor.download = 'Акт выполненных работ по заявке № <%= zaivka.id_zaivka %>.doc';
+              document.body.append(anchor);
+              anchor.style = "display:none";
+              anchor.click();
+              anchor.remove();
+
+              URL.revokeObjectURL(url);
+            })
+        }
+      </script>
+
+   
+    </div>
+</body>
+
+</html>

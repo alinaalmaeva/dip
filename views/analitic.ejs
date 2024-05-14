@@ -1,72 +1,130 @@
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/styles.css">
-    <title>Самый лучший диплом</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/styles.css">
+  <title>Самый лучший диплом</title>
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="Naiming">Servec desk</div>
-            <div class="menu">
-                <<div class="button_menu"><a href="/users/zaiv_zaiv">Заявки</a></div>
-                <div class="button_menu">Документы</div>
-                <div class="button_menu">Склад</div>
-                <div class="button_menu">Аналитика</div>
-                <div class="button_menu">Сотрудники</div>
-                <div class="button_menu">Личный кабинет</div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="sidebar">
+      <div class="Naiming">Servec desk</div>
+      <div class="menu">
+        <div class="button_menu"><a href="/users/zaiv_zaiv">Заявки</a></div>
+        <div class="button_menu">Документы</div>
+        <div class="button_menu"><a href="/users/sklad">Склад</a></div>
+        <div class="button_menu">Аналитика</div>
+        <div class="button_menu"><a href="/users/sotryd">Сотрудники</a></div>
+        <div class="button_menu">Личный кабинет</div>
+      </div>
+    </div>
 
-        <div class="main">
-        <div class="header">
-            <button onclick="window.location.href='/new_zaiv.html';">+ Новая заявка</button>
-            <div class="right_header">
-                <div class="date" id=date></div>
-                <script>
-                    var d = new Date();
-                    data =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
-                    document.getElementById("date").textContent = data;
-                </script>
-            <div class="name_photo">
-                <div class="name"> <%= user %> </div>
-                <div class="photo"></div>
-            </div>
-        </div>
-        </div>
-        <div>
-            <h1>Аналитика</h1>
-            <div>
-                <canvas id="myChart"></canvas>
-            </div>
-        </div>
-       
-        <script>
-            const ctx = document.getElementById('myChart');
-          
-            new Chart(ctx, {
-              type: 'doughnut',
-              data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                  label: '# of Votes',
-                  data: [12, 19, 3, 5, 2, 3],
-                  borderWidth: 1
-                }]
-              },
-              options: {
-                scales: {
-                  y: {
-                    beginAtZero: true
-                  }
-                }
-              }
-            });
+    <div class="main">
+      <div class="header">
+        <h1>Аналитика</h1>
+        <div class="right_header">
+          <div class="date" id=date></div>
+          <script>
+            var d = new Date();
+            data = ("0" + d.getDate()).slice(-2) + "." + ("0" + (Number(d.getMonth()) + 1)).slice(-2) + "." + d.getFullYear();
+            document.getElementById("date").textContent = data;
           </script>
-    </div>
-        
-    </div>
-</body>
+          <div class="name_photo">
+            <div class="name">
+              <%= user %>
+            </div>
+            <div class="photo"></div>
+          </div>
+        </div>
+      </div>
+      <div class="analitic_page">
+        <div class="analitic">
 
+          <select id="month-select" name="month" required>
+            <option value="1">Январь</option>
+            <option value="2">Февраль</option>
+            <option value="3">Март</option>
+            <option value="4">Апрель</option>
+            <option value="5" selected>Май</option>
+            <option value="6">Июнь</option>
+            <option value="7">Июль</option>
+            <option value="8">Август</option>
+            <option value="9">Сентябрь</option>
+            <option value="10">Октябрь</option>
+            <option value="11">Ноябрь</option>
+            <option value="12">Декабрь</option>
+
+          </select>
+          <div class="canvas-content">
+            <canvas id="canvas"> </canvas>
+          </div>
+        </div>
+
+        <div class="dowland">
+          <button id="btn">Скачать отчет</button>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+      <script>
+        const btn = document.querySelector("#btn").addEventListener('click', getData);
+
+        function getData() {
+          fetch('http://localhost:3000/users/analitic', {
+            method: 'POST'
+          })
+            .then(res => res.blob())
+            .then(data => {
+              let url = URL.createObjectURL(data);
+              console.log(url);
+
+              let anchor = document.createElement('a')
+              anchor.href = url;
+              anchor.download = 'Отчет за месяц.doc';
+              document.body.append(anchor);
+              anchor.style = "display:none";
+              anchor.click();
+              anchor.remove();
+
+              URL.revokeObjectURL(url);
+            })
+        }
+      </script>
+
+      <script>
+        document.getElementById('month-select').addEventListener('change', function () {
+          fetch(`/users/analitic?month=${this.value}`)
+            .then(response => response.json())
+        });
+
+
+        const ctx = document.getElementById('canvas');
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['В ожидании', 'В работе', 'Выполнено'],
+            datasets: [{
+              label: 'Кол-во заявок',
+              data: [<%= ogid %>, <%= rab %>, <%= vup %>],
+              backgroundColor: [
+                'rgb(255, 99, 132)',
+                'rgb(255, 205, 86)',
+                'rgb(70, 232, 97)',
+              ],
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+    </div>
+  </div>
+</body>
 </html>

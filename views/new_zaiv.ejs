@@ -42,7 +42,7 @@
       <form action="/users/new_zaiv" method="POST" id="myForm">
         <label for="number">Оборудование</label>
         <select type="text" id="number" name="invert_number" required>
-          <option value="">Выберите инвертарный номер оборудования</option>
+          <option value="">Выберите инвентарный номер оборудования</option>
           <% data.forEach(function(user) { %>
             <option value="<%= user.invert_number %>"> <%= user.invert_number %> </option> <% }) %>
         </select>

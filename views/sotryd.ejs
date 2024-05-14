@@ -1,0 +1,89 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <title>Самый лучший диплом</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="Naiming">Servec desk</div>
+            <div class="menu">
+                <div class="button_menu"><a href="/users/zaiv_zaiv">Заявки</a></div>
+                <div class="button_menu">Документы</div>
+                <div class="button_menu"><a href="/users/sklad">Склад</a></div>
+                <div class="button_menu"> <a href="/users/analitic">Аналитика</a></div>
+                <div class="button_menu">Сотрудники</div>
+                <div class="button_menu">Личный кабинет</div>
+            </div>
+        </div>
+
+        <div class="main">
+        <div class="header">
+          <h1>Сотрудники</h1>
+            <div class="right_header">
+                <div class="date" id=date></div>
+                <script>
+                    var d = new Date();
+                    data =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
+                    document.getElementById("date").textContent = data;
+                </script>
+            <div class="name_photo">
+                <div class="name"> <%= user %> </div>
+                <div class="photo"></div>
+            </div>
+        </div>
+        </div>
+
+        <div class="search">
+			<input type='text' id="elastic" placeholder='Поиск...'/>
+		</div>
+
+        <table class="table">
+            <thead>
+              <tr>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Должность</th>
+                <th>Отдел</th>
+                <th>Телефон</th>
+               </tr>
+            </thead>
+            <tbody>
+                <% data.forEach(function(user) { %>
+                <tr class="elastic">
+                  <td><%= user.familiy %></td>
+                  <td><%= user.name %></td>
+                  <td><%= user.otchestvo %></td>
+                  <td><%= user.dolgnost %></td>
+                  <td><%= user.otdel %></td>
+                  <td><%= user.phone %></td>
+
+                </tr>
+                <% }) %>
+              </tbody>
+          </table>
+
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+          <script>
+            $(document).ready(function() {
+                $('#elastic').on('keyup', function() {
+                    var value = $(this).val().toLowerCase();
+                    $('.table .elastic').filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            });
+        </script>
+
+        
+        
+
+   </div>
+    </div>
+</body>
+</html>

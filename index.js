@@ -9,6 +9,8 @@ const session = require("express-session");
 require("dotenv").config();
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const Chart = require('chart.js');
+
 
 
 //Проверка польльзователя на вход в систему
@@ -88,6 +90,7 @@ app.use(session({
 
 app.set("view engine", "ejs");
 app.use(express.urlencoded({extended:false}));
+app.use(express.json())
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -106,7 +109,7 @@ app.get("/users/zaiv_zaiv", checkNotAuthenticated, async(req, res)=>{
   try {
     // Выполните запрос к базе данных
 
-    const result = await client.query('SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel');
+    const result = await client.query('SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel ORDER BY date_start desc');
     result.rows.forEach(row => {
       row.date_start = row.date_start ? row.date_start.toLocaleDateString() : null,
       row.date_finish= row.date_finish ? row.date_finish.toLocaleDateString() : null
@@ -218,6 +221,111 @@ res.render("new_zaiv", {user: req.user.name, data: results.rows});
 return;
 });
 
+app.get("/users/analitic", async(req, res)=>{
+  const candlestickData = [
+    { open: 100, high: 120, low: 80, close: 110 },
+    { open: 110, high: 130, low: 90, close: 120 },
+    { open: 120, high: 140, low: 100, close: 130 }
+
+  ];
+  const month= req.query.month;
+  const vupPromise = await client.query(`SELECT COUNT(*) FROM zaivka WHERE status=1 AND extract(month from date_start) = 5`);
+  console.log(req.query.month);
+  const rabPromise = await client.query(`SELECT COUNT(*) FROM zaivka WHERE status=2 AND extract(month from date_start) = 5`);
+  const ogidPromise =await client.query(`SELECT COUNT(*) FROM zaivka WHERE status=3 AND extract(month from date_start) = 5`);
+
+  Promise.all([vupPromise, rabPromise, ogidPromise])
+    .then(data => {
+      const vup = data[0].rows[0].count;
+      const rab = data[1].rows[0].count;
+      const ogid = data[2].rows[0].count;
+      console.log("Ожидает"+ogid);
+     res.render("analitic", {user: req.user.name, vup:vup, rab:rab, ogid:ogid, candlestickData: JSON.stringify(candlestickData)});
+
+    })
+ 
+});
+
+app.post('/users/analitic', (req, res)=>{
+  const vupPromise = client.query(`SELECT COUNT(*) FROM zaivka WHERE status=1 AND extract(month from date_start) = 5`);
+  const rabPromise = client.query(`SELECT COUNT(*) FROM zaivka WHERE status=2 AND extract(month from date_start) = 5`);
+  const ogidPromise =client.query(`SELECT COUNT(*) FROM zaivka WHERE status=3 AND extract(month from date_start) = 5`);
+  Promise.all([vupPromise, rabPromise, ogidPromise])
+   .then(data => {
+    const ogid = parseInt(data[2].rows[0].count, 10); // Преобразуем строку в число
+    const vup = parseInt(data[0].rows[0].count, 10);
+    const rab = parseInt(data[1].rows[0].count, 10);
+
+  
+    const otn=(vup/(ogid+rab+vup))*100;
+
+  const reportContent = `Отчет за месяц\n\nЗаявок в ожидании: ${ogid}\nЗаявок в работе: ${rab}\nЗаявок выполненных: ${vup} \n\nПроцент выполненнх заявок: ${otn}%`;
+
+  res.send(reportContent)
+})
+});
+
+
+app.get("/users/sotryd", async(req, res)=>{
+  const results = await client.query(`SELECT * FROM ispolnitel`);
+res.render("sotryd", {user: req.user.name, data: results.rows});
+return;
+});
+
+app.get("/users/sklad", async(req, res)=>{
+  const results = await client.query(`SELECT id_sklad, oborydovanie.name, oborydovanie.invert_number, kol_vo  FROM sklad 
+  JOIN oborydovanie ON sklad.oborydovanie = oborydovanie.id_oboryd and sklad.invert_number = oborydovanie.id_oboryd ORDER BY id_sklad`);
+res.render("sklad", {user: req.user.name, data: results.rows});
+return;
+});
+
+
+
+app.get("/users/zaivka-page/:id", async(req, res)=>{
+  const id_zaivka = req.params.id;
+  // Здесь Вы должны получить данные заявки из Вашей базы данных, используя id_zaivka
+
+    const zaivk = await client.query(`SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status, text FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel WHERE id_zaivka = $1`,[id_zaivka]);
+
+    if (zaivk.rows.length === 0) {
+      return res.status(404).send('Заявка не найдена');
+    }
+
+   zaivk.rows.forEach(row => {
+      row.date_start = row.date_start ? row.date_start.toLocaleDateString() : null,
+      row.date_finish= row.date_finish ? row.date_finish.toLocaleDateString() : null
+    });
+    const zaivka = zaivk.rows[0];
+
+  res.render("zaivka-page", { user: req.user.name, zaivka });
+
+return;
+});
+
+
+app.post('/users/zaivka-page/:id', async (req, res)=>{
+  const id_zaivka = req.params.id;
+  // Здесь Вы должны получить данные заявки из Вашей базы данных, используя id_zaivka
+
+    const zaivk = await client.query(`SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status, text FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel WHERE id_zaivka = $1`,[id_zaivka]);
+    if (zaivk.rows.length === 0) {
+      return res.status(404).send('Заявка не найдена');
+    }
+
+   zaivk.rows.forEach(row => {
+      row.date_start = row.date_start ? row.date_start.toLocaleDateString() : null,
+      row.date_finish= row.date_finish ? row.date_finish.toLocaleDateString() : null
+    });
+    const zaivka = zaivk.rows[0];
+
+  const reportContent = `Акт выполненных работ \n\n\nЗаявка № ${zaivka.id_zaivka}\n\n\nИнвентарный номер: ${zaivka.invert_number} \n\nЗаявитель: ${zaivka.firstname}  \n\nИсполнитель: ${zaivka.familiy}\n\nСтатус заявки: ${zaivka.name_status}  \n\nДата начала: ${zaivka.date_start} \n\nДата завершения: ${zaivka.date_finish} \n\nКомментарий: ${zaivka.text} `;
+
+  res.send(reportContent)
+
+});
+
+
+
 app.post("/", passport.authenticate("local",{
 successRedirect:"/users/zaiv_zaiv",
 failureRedirect:"/",
@@ -240,14 +348,14 @@ function checkNotAuthenticated(req, res, next) {
 }
 
 
-//const client = new Client({
-//    host: "localhost",
-  //  user: "postgres",
-//    port: 5432, 
- //   password: "1",
- //   database: "desk"
-//})
+const client = new Client({
+  host: "localhost",
+ user: "postgres",
+  port: 5432, 
+ password: "1",
+ database: "desk"
+})
 
-//client.connect();
+client.connect();
 
-//module.exports = { client: client };
+module.exports = { client: client };

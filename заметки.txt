@@ -33,3 +33,79 @@ app.get("/users/new_zaiv", async (req, res) => {
 ```
 
 В этом примере мы сначала выполняем запрос к таблице `users` для получения `id` пользователя по его `firstname`. Затем мы используем этот `id` в качестве значения для `fk_zaivitel` при выполнении `INSERT` в таблицу `zaivka`.
+
+
+
+
+        <script>
+    document.getElementById('month-select').addEventListener('change', function() {
+  fetch(`/users/analitic?month=${this.value}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      response.json();
+    })
+    .then(data => {
+      const ctx = document.getElementById('canvas');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['В ожидании', 'В работе', 'Выполнено'],
+          datasets: [{
+            label: 'Кол-во заявок',
+            data: [70, 20,3],
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(255, 205, 86)',
+              'rgb(70, 232, 97)',
+            ],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    });
+});
+        </script>
+
+
+--Вот так надо, чтобы месяч сам подставлялся
+
+        const month= req.query.month;
+  const vupPromise = await client.query(`SELECT COUNT(*) FROM zaivka WHERE status=1 AND extract(month from date_start) = $1`,[month]);
+  console.log(req.query.month);
+  const rabPromise = await client.query(`SELECT COUNT(*) FROM zaivka WHERE status=2 AND extract(month from date_start) = $1`,[month]);
+  const ogidPromise =await client.query(`SELECT COUNT(*) FROM zaivka WHERE status=3 AND extract(month from date_start) = $1`,[month]);
+
+
+
+
+  let ab = new ArrayBuffer(2);
+  let dataview = new DataView(ab);
+  dataview.setInt8(0,104);
+  dataview.setInt8(1,105);
+
+
+    <script>
+            document.querySelector('#elastic').oninput = function(){
+                let val = this.value.trim();
+                let elasticItems= document.querySelectorAll('. elastic td');
+                if(val != ''){
+                    elasticItems.forEach(function(elem){
+                        if(elem.innerText.search(val)==-1){
+                            elem.classList.add('hide');
+                        }
+                        else{
+                            elem.classList.remove('hide');
+                        }
+                    });
+                }
+            }
+          </script>
