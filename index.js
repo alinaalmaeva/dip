@@ -109,7 +109,7 @@ app.get("/users/zaiv_zaiv", checkNotAuthenticated, async(req, res)=>{
   try {
     // Выполните запрос к базе данных
 
-    const result = await client.query('SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel ORDER BY date_start desc');
+    const result = await client.query('SELECT zaivka.id_zaivka, oborydovanie.invert_number, zaivitel.firstname AS firstname_zaivitel, ispolnitel.firstname AS firstname_ispolnitel, zaivka.date_start, zaivka.date_finish, status.name_status FROM zaivka   JOIN status ON zaivka.status = status.id_status JOIN  users AS zaivitel ON zaivka.fk_zaivitel = zaivitel.id left JOIN users AS ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd ORDER BY date_start desc');
     result.rows.forEach(row => {
       row.date_start = row.date_start ? row.date_start.toLocaleDateString() : null,
       row.date_finish= row.date_finish ? row.date_finish.toLocaleDateString() : null
@@ -285,7 +285,11 @@ app.get("/users/zaivka-page/:id", async(req, res)=>{
   const id_zaivka = req.params.id;
   // Здесь Вы должны получить данные заявки из Вашей базы данных, используя id_zaivka
 
-    const zaivk = await client.query(`SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status, text FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel WHERE id_zaivka = $1`,[id_zaivka]);
+    const zaivk = await client.query(`SELECT zaivka.id_zaivka, oborydovanie.invert_number, zaivitel.firstname AS firstname_zaivitel, ispolnitel.firstname AS firstname_ispolnitel, zaivka.date_start, zaivka.date_finish, status.name_status, zaivka.text FROM zaivka 
+    JOIN status ON zaivka.status = status.id_status 
+    JOIN  users AS zaivitel ON zaivka.fk_zaivitel = zaivitel.id 
+    left JOIN users AS ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id 
+    JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd WHERE id_zaivka = $1`,[id_zaivka]);
 
     if (zaivk.rows.length === 0) {
       return res.status(404).send('Заявка не найдена');
@@ -307,7 +311,11 @@ app.post('/users/zaivka-page/:id', async (req, res)=>{
   const id_zaivka = req.params.id;
   // Здесь Вы должны получить данные заявки из Вашей базы данных, используя id_zaivka
 
-    const zaivk = await client.query(`SELECT id_zaivka, oborydovanie.invert_number, users.firstname, ispolnitel.familiy, date_start, date_finish, status.name_status, text FROM zaivka JOIN status ON zaivka.status = status.id_status JOIN users ON zaivka.fk_zaivitel = users.id JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd  left JOIN ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id_ispolnitel WHERE id_zaivka = $1`,[id_zaivka]);
+    const zaivk = await client.query(`SELECT zaivka.id_zaivka, oborydovanie.invert_number, zaivitel.firstname AS firstname_zaivitel, ispolnitel.firstname AS firstname_ispolnitel, zaivka.date_start, zaivka.date_finish, status.name_status, zaivka.text FROM zaivka 
+JOIN status ON zaivka.status = status.id_status 
+JOIN  users AS zaivitel ON zaivka.fk_zaivitel = zaivitel.id 
+left JOIN users AS ispolnitel ON zaivka.fk_ispolnitel = ispolnitel.id 
+JOIN oborydovanie ON zaivka.fk_invert_number = oborydovanie.id_oboryd WHERE id_zaivka = $1`,[id_zaivka]);
     if (zaivk.rows.length === 0) {
       return res.status(404).send('Заявка не найдена');
     }
@@ -318,12 +326,40 @@ app.post('/users/zaivka-page/:id', async (req, res)=>{
     });
     const zaivka = zaivk.rows[0];
 
-  const reportContent = `Акт выполненных работ \n\n\nЗаявка № ${zaivka.id_zaivka}\n\n\nИнвентарный номер: ${zaivka.invert_number} \n\nЗаявитель: ${zaivka.firstname}  \n\nИсполнитель: ${zaivka.familiy}\n\nСтатус заявки: ${zaivka.name_status}  \n\nДата начала: ${zaivka.date_start} \n\nДата завершения: ${zaivka.date_finish} \n\nКомментарий: ${zaivka.text} `;
+  const reportContent = `Акт выполненных работ \n\n\nЗаявка № ${zaivka.id_zaivka}\n\n\nИнвентарный номер: ${zaivka.invert_number} \n\nЗаявитель: ${zaivka.firstname_zaivitel}  \n\nИсполнитель: ${zaivka.firstname_ispolnitel}\n\nСтатус заявки: ${zaivka.name_status}  \n\nДата начала: ${zaivka.date_start} \n\nДата завершения: ${zaivka.date_finish} \n\nКомментарий: ${zaivka.text} `;
 
   res.send(reportContent)
+  const userResult = await client.query('SELECT id FROM users WHERE firstname = $1', [req.user.firstname]);
+if (userResult.rows.length === 0) {
+  return res.status(400).send('User not found');
+}
+const fk_ispolnitel = userResult.rows[0].id;
+
+
+  try {
+    await client.query('UPDATE zaivka SET fk_ispolnitel = $1, status=2  WHERE id_zaivka = $2', [fk_ispolnitel, id_zaivka]);
+    res.render("zaivka-page", { user: req.user.name, zaivka});
+      console.log("Заявка успешно изменена");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Ошибка принии заявки");
+  }
+
+  });
+
+app.post('/users/zaivka-page/close/:id', async (req, res) => {
+  const id_zaivka = req.params.id;
+  var d = new Date();
+  const date_finish =("0" + d.getDate()).slice(-2) +"."+ ("0" + (Number(d.getMonth())+1)).slice(-2) + "." + d.getFullYear();
+  try {
+    await client.query('UPDATE zaivka SET status=1, date_finish = $1 WHERE id_zaivka = $2', [date_finish, id_zaivka]);
+    console.log("Заявка успешно изменена");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Ошибка принии заявки");
+  }
 
 });
-
 
 
 app.post("/", passport.authenticate("local",{

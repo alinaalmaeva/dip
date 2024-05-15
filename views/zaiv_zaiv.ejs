@@ -12,9 +12,10 @@
         <div class="sidebar">
             <div class="Naiming">Servec desk</div>
             <div class="menu">
-                <div class="button_menu">Заявки</div>
-                <div class="button_menu">Документы</div>
-                <div class="button_menu"><a href="/users/analitic">Аналитика </a></div>
+                <div class="button_menu"><a href="/users/zaiv_zaiv">Заявки</a></div>
+                <div class="button_menu"><a href="/users/sklad">Склад</a></div>
+                <div class="button_menu"> <a href="/users/analitic">Аналитика</a></div>
+                <div class="button_menu"><a href="/users/sotryd">Сотрудники</a></div>
                 <div class="button_menu">Личный кабинет</div>
             </div>
         </div>
@@ -31,11 +32,13 @@
                 </script>
             <div class="name_photo">
                 <div class="name"> <%= user %> </div>
-                <div class="photo"></div>
+                <div class="photo"><img src="/ava.png"/> </div>
             </div>
         </div>
         </div>
-        
+        <div class="search" style="margin-top: 50px">
+			<input type='text' id="elastic" placeholder='Поиск...'/>
+		</div>
         <table class="table">
             <thead>
               <tr>
@@ -50,11 +53,11 @@
             </thead>
             <tbody>
                 <% data.forEach(function(user) { %>
-                <tr data-id="<%= user.id_zaivka %>" onclick="redirectToDetailsPage(this)" class="actiontr">
+                <tr data-id="<%= user.id_zaivka %>" onclick="redirectToDetailsPage(this)" class="actiontr" >
                   <td><%= user.id_zaivka %></td>
                   <td><%= user.invert_number %></td>
-                  <td><%= user.firstname %></td>
-                  <td><%= user.familiy %></td>
+                  <td><%= user.firstname_zaivitel %></td>
+                  <td><%= user.firstname_ispolnitel %></td>
                   <td><%= user.date_start %></td>
                   <td><%= user.date_finish %></td>
                   <td><%= user.name_status %></td>
@@ -63,6 +66,18 @@
               </tbody>
           </table>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function() {
+          $('#elastic').on('keyup', function() {
+              var value = $(this).val().toLowerCase();
+              $('.table .actiontr').filter(function() {
+                  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+              });
+          });
+      });
+  </script>
 
     <script>
         function redirectToDetailsPage(element) {

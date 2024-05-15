@@ -12,16 +12,17 @@
         <div class="sidebar">
             <div class="Naiming">Servec desk</div>
             <div class="menu">
-                <div class="button_menu"><a href="/users/zaiv_zaiv">Заявки </a></div>
-                <div class="button_menu">Документы</div>
-                <div class="button_menu"><a href="/users/analitic">Аналитика </a></div>
-                <div class="button_menu">Личный кабинет</div>
+              <div class="button_menu"><a href="/users/zaiv_zaiv">Заявки</a></div>
+              <div class="button_menu"><a href="/users/sklad">Склад</a></div>
+              <div class="button_menu"> <a href="/users/analitic">Аналитика</a></div>
+              <div class="button_menu"><a href="/users/sotryd">Сотрудники</a></div>
+              <div class="button_menu">Личный кабинет</div>
             </div>
         </div>
 
         <div class="main">
         <div class="header">
-            <button onclick="window.location.href='new_zaiv';">+ Новая заявка</button>
+            <button onclick="window.location.href='../new_zaiv';">+ Новая заявка</button>
             <div class="right_header">
                 <div class="date" id=date></div>
                 <script>
@@ -31,7 +32,7 @@
                 </script>
             <div class="name_photo">
                 <div class="name"> <%= user %> </div>
-                <div class="photo"></div>
+                <div class="photo"><img src="/ava.png"/></div>
             </div>
         </div>
         </div>
@@ -40,8 +41,8 @@
             <h1>Заявка № <%= zaivka.id_zaivka %></h1>
            <div class="zaivka-data">
               <label id="number">Инвентарный номер:  <%= zaivka.invert_number %></label>
-              <label id="zaivitel">Заявитель:  <%= zaivka.firstname %></label>
-              <label id="ispolnitel">Исполнитель:  <%= zaivka.familiy %></label>
+              <label id="zaivitel">Заявитель:  <%= zaivka.firstname_zaivitel %></label>
+              <label id="ispolnitel">Исполнитель: <%= zaivka.firstname_ispolnitel %> </label>
               <label id="status">Статус:  <%= zaivka.name_status%></label>
               <label id="date_start">Дата начала:  <%= zaivka.date_start %></label>
               <label id="date_finish">Дата завершения: <%= zaivka.date_finish %></label>
@@ -52,11 +53,58 @@
                 <button id="btn">Акт выполненных работ</button>
             </div>
             <div class="dowland-prin">
-                <button id="btn">Принять в работу</button>
+                <button id="submit" type="submit" name="submit" >Принять в работу</button>
+            </div>
+            <div class="close">
+                <button id="close" type="submit" name="submit" >Завершить</button>
             </div>
             </div>
         </div>
     </div>
+
+<script>
+    document.getElementById('submit').addEventListener('click', async function(event) {
+  event.preventDefault(); // предотвращаем стандартное поведение кнопки (отправку формы)
+
+  const response = await fetch(`http://localhost:3000/users/zaivka-page/<%=zaivka.id_zaivka %>`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    // если у Вас есть дополнительные данные для отправки, Вы можете добавить их здесь
+    // body: JSON.stringify({ additionalData: 'someValue' }),
+  });
+
+  if (!response.ok) {
+    console.error('Ошибка при отправке запроса:', response.status, response.statusText);
+    return;
+  }
+
+  // если запрос успешен, Вы можете обновить данные на странице или выполнить другие действия
+  console.log('Заявка успешно принята в работу');
+  // обновите таблицу или отобразите сообщение об успешном изменении
+});
+
+document.getElementById('close').addEventListener('click', async function(event) {
+  event.preventDefault(); // предотвращаем стандартное поведение кнопки (отправку формы)
+
+  const response = await fetch(`http://localhost:3000/users/zaivka-page/close/<%=zaivka.id_zaivka %>`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    console.error('Ошибка при отправке запроса:', response.status, response.statusText);
+    return;
+  }
+
+  // если запрос успешен, Вы можете обновить данные на странице или выполнить другие действия
+  console.log('Заявка завершена');
+  // обновите таблицу или отобразите сообщение об успешном изменении
+});
+</script>
 
     <script>
         const btn = document.querySelector("#btn").addEventListener('click', getData);
